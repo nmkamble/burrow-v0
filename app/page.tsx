@@ -28,12 +28,17 @@ export default async function HomePage() {
     .eq("is_available", true)
     .order("created_at", { ascending: false });
 
+
   // Fetch review stats for items
   const itemIds = items?.map((i) => i.id) || [];
-  const { data: reviewStats } = await supabase
-    .from("reviews")
-    .select("item_id, rating")
-    .in("item_id", itemIds);
+  let reviewStats: { item_id: string; rating: number }[] | null = null;
+  if (itemIds.length > 0) {
+    const { data } = await supabase
+      .from("reviews")
+      .select("item_id, rating")
+      .in("item_id", itemIds);
+    reviewStats = data;
+  }
 
   // Calculate avg ratings per item
   const ratingMap: Record<string, { total: number; count: number }> = {};
