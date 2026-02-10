@@ -52,11 +52,11 @@ export function RentRequestForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) {
-      toast.error("Please sign in to request a rental.");
+      toast.error("Please sign in to request a borrow.");
       return;
     }
     if (userId === ownerId) {
-      toast.error("You cannot rent your own item.");
+      toast.error("You cannot borrow your own item.");
       return;
     }
 
@@ -77,7 +77,7 @@ export function RentRequestForm({
     if (error) {
       toast.error("Failed to submit rental request. Please try again.");
     } else {
-      toast.success("Rental request sent! The owner will review it.");
+      toast.success("Borrow request sent! The lender will review it.");
       setSubmitted(true);
     }
   };
@@ -91,7 +91,7 @@ export function RentRequestForm({
           </div>
           <h3 className="font-medium text-foreground">Request Sent</h3>
           <p className="text-center text-sm text-muted-foreground">
-            Your rental request has been submitted. The owner will review and
+            Your borrow request has been submitted. The lender will review and
             respond to your request.
           </p>
         </CardContent>
@@ -102,9 +102,9 @@ export function RentRequestForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Request to Rent</CardTitle>
+        <CardTitle className="text-lg">Request to Borrow</CardTitle>
         <CardDescription>
-          Select your dates and send a request to the owner.
+          Select your dates and send a request to the lender.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -158,11 +158,11 @@ export function RentRequestForm({
           )}
           {!userId ? (
             <Button asChild>
-              <a href="/auth/login">Sign in to rent</a>
+              <a href="/auth/login">Sign in to borrow</a>
             </Button>
           ) : (
             <Button type="submit" disabled={isLoading || !startDate || !endDate}>
-              {isLoading ? "Sending request..." : "Send Rental Request"}
+              {isLoading ? "Sending request..." : "Send Borrow Request"}
             </Button>
           )}
         </form>

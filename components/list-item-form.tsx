@@ -89,11 +89,11 @@ export function ListItemForm({ categories, userId }: ListItemFormProps) {
             Item Listed!
           </h3>
           <p className="text-center text-muted-foreground">
-            Your item is now visible to other students. You will be notified when
-            someone requests to rent it.
+            Your item is now visible to your neighbors. You will be notified when
+            someone requests to borrow it.
           </p>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => router.push("/")}>
+            <Button variant="outline" onClick={() => router.push("/browse")}>
               Browse Items
             </Button>
             <Button
@@ -120,11 +120,11 @@ export function ListItemForm({ categories, userId }: ListItemFormProps) {
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="font-display text-2xl">
-          List an Item for Rent
+          List an Item to Lend
         </CardTitle>
         <CardDescription>
-          Share your college essentials with fellow students and earn some extra
-          cash.
+          Share items with your neighbors and earn some extra cash through
+          Burrow.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -133,7 +133,7 @@ export function ListItemForm({ categories, userId }: ListItemFormProps) {
             <Label htmlFor="title">Item Title</Label>
             <Input
               id="title"
-              placeholder="e.g., TI-84 Plus CE Calculator"
+              placeholder="e.g., Power drill, Party tent, Projector"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -203,7 +203,7 @@ export function ListItemForm({ categories, userId }: ListItemFormProps) {
               <Label htmlFor="location">Pickup Location</Label>
               <Input
                 id="location"
-                placeholder="e.g., North Campus Dorms"
+                placeholder="e.g., Downtown, West Side"
                 required
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
@@ -231,7 +231,7 @@ export function ListItemForm({ categories, userId }: ListItemFormProps) {
             className="mt-2"
             disabled={isLoading || !categoryId || !condition}
           >
-            {isLoading ? "Listing item..." : "List Item for Rent"}
+            {isLoading ? "Listing item..." : "List Item"}
           </Button>
         </form>
       </CardContent>

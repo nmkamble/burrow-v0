@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Recycle } from "lucide-react";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -50,9 +50,9 @@ export default function LoginPage() {
     <div className="flex min-h-svh w-full items-center justify-center bg-muted p-6 md:p-10">
       <div className="w-full max-w-sm">
         <div className="flex flex-col items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 text-primary">
-            <Recycle className="h-7 w-7" />
-            <span className="font-display text-xl font-bold">CampusRent</span>
+          <Link href="/" className="flex items-center gap-2">
+            <Image src="/burrow-mascot.jpg" alt="Burrow mascot" width={40} height={40} className="rounded-full" />
+            <span className="font-display text-xl font-bold text-foreground">Burrow</span>
           </Link>
           <Card className="w-full">
             <CardHeader>

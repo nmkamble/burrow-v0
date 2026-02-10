@@ -66,7 +66,7 @@ export default async function ItemDetailPage({
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
         {/* Back link */}
         <Link
-          href="/"
+          href="/browse"
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
