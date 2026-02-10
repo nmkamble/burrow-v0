@@ -65,7 +65,7 @@ export default async function MyListingsPage() {
               My Listings
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Manage items you have listed for rent.
+              Manage items you have listed for lending.
             </p>
           </div>
           <Button asChild>

@@ -103,7 +103,7 @@ export default async function MyRentalsPage() {
               Browse items and send your first rental request.
             </p>
             <Link
-              href="/"
+              href="/browse"
               className="mt-4 text-sm text-primary underline underline-offset-4"
             >
               Browse items
