@@ -6,11 +6,29 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  // If Supabase env vars are not configured, skip session handling
+  // but still enforce redirects for protected paths
+  if (!supabaseUrl || !supabaseAnonKey) {
+    const protectedPaths = ['/list-item', '/my-rentals', '/my-listings']
+    const isProtected = protectedPaths.some((path) =>
+      request.nextUrl.pathname.startsWith(path),
+    )
+    if (isProtected) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/auth/login'
+      return NextResponse.redirect(url)
+    }
+    return supabaseResponse
+  }
+
   // With Fluid compute, don't put this client in a global environment
   // variable. Always create a new one on each request.
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         getAll() {
