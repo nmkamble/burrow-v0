@@ -19,7 +19,6 @@ export default async function ItemDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  console.log("[v0] Item detail page loading for id:", id);
   const supabase = await createClient();
 
   const {
@@ -39,10 +38,7 @@ export default async function ItemDetailPage({
     .eq("id", id)
     .single();
 
-  console.log("[v0] Item query result:", item ? "found" : "null", "for id:", id);
-
   if (!item) {
-    console.log("[v0] Item not found, returning 404 for id:", id);
     notFound();
   }
 
