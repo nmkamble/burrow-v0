@@ -28,7 +28,7 @@ export default async function ItemDetailPage({
   } = await supabase.auth.getUser();
 
   // Fetch item with category and owner profile
-  const { data: item } = await supabase
+  const { data: item, error: itemError } = await supabase
     .from("items")
     .select(
       `
@@ -39,6 +39,8 @@ export default async function ItemDetailPage({
     )
     .eq("id", id)
     .single();
+
+  console.log("[v0] item query result:", item ? "found" : "null", "error:", itemError?.message || "none", "code:", itemError?.code || "none");
 
   if (!item) {
     notFound();
