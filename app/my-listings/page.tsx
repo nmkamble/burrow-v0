@@ -1,34 +1,20 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { SiteHeader } from "@/components/site-header";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { MapPin, Package, Plus } from "lucide-react";
-import Link from "next/link";
-
-const conditionLabels: Record<string, string> = {
-  "like-new": "Like New",
-  good: "Good",
-  fair: "Fair",
-  worn: "Worn",
-};
+import { redirect } from "next/navigation"
+import { createClient } from "@/lib/supabase/server"
+import { SiteHeader } from "@/components/site-header"
+import { Button } from "@/components/ui/button"
+import { Package, Plus } from "lucide-react"
+import Link from "next/link"
+import { ListingCard } from "@/components/listing-card"
 
 export default async function MyListingsPage() {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect("/auth/login");
+    redirect("/auth/login")
   }
 
   const { data: items } = await supabase
@@ -40,20 +26,30 @@ export default async function MyListingsPage() {
     `
     )
     .eq("owner_id", user.id)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+
+  // Fetch categories for the edit dialog
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("id, name, slug")
+    .order("name")
 
   // Fetch pending requests for user's items
-  const itemIds = items?.map((i) => i.id) || [];
-  const { data: pendingRequests } = await supabase
-    .from("rental_requests")
-    .select("item_id")
-    .in("item_id", itemIds)
-    .eq("status", "pending");
+  const itemIds = items?.map((i) => i.id) || []
+  let pendingRequests: { item_id: string }[] | null = null
+  if (itemIds.length > 0) {
+    const { data } = await supabase
+      .from("rental_requests")
+      .select("item_id")
+      .in("item_id", itemIds)
+      .eq("status", "pending")
+    pendingRequests = data
+  }
 
-  const pendingCountMap: Record<string, number> = {};
+  const pendingCountMap: Record<string, number> = {}
   pendingRequests?.forEach((req) => {
-    pendingCountMap[req.item_id] = (pendingCountMap[req.item_id] || 0) + 1;
-  });
+    pendingCountMap[req.item_id] = (pendingCountMap[req.item_id] || 0) + 1
+  })
 
   return (
     <div className="min-h-svh bg-background">
@@ -79,54 +75,12 @@ export default async function MyListingsPage() {
         {items && items.length > 0 ? (
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
-              <Card key={item.id}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-base">
-                      <Link
-                        href={`/items/${item.id}`}
-                        className="hover:text-primary transition-colors"
-                      >
-                        {item.title}
-                      </Link>
-                    </CardTitle>
-                    <span className="shrink-0 font-display font-bold text-primary">
-                      ${Number(item.price_per_day).toFixed(2)}
-                      <span className="text-xs font-normal text-muted-foreground">
-                        /day
-                      </span>
-                    </span>
-                  </div>
-                  <CardDescription className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3" />
-                    {item.location}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap items-center gap-2">
-                    {item.categories?.name && (
-                      <Badge variant="secondary" className="text-xs">
-                        {item.categories.name}
-                      </Badge>
-                    )}
-                    <Badge variant="outline" className="text-xs">
-                      {conditionLabels[item.condition] || item.condition}
-                    </Badge>
-                    <Badge
-                      variant={item.is_available ? "default" : "destructive"}
-                      className="text-xs"
-                    >
-                      {item.is_available ? "Available" : "Unavailable"}
-                    </Badge>
-                  </div>
-                  {pendingCountMap[item.id] > 0 && (
-                    <p className="mt-3 text-sm font-medium text-primary">
-                      {pendingCountMap[item.id]} pending request
-                      {pendingCountMap[item.id] !== 1 ? "s" : ""}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
+              <ListingCard
+                key={item.id}
+                item={item}
+                categories={categories || []}
+                pendingCount={pendingCountMap[item.id] || 0}
+              />
             ))}
           </div>
         ) : (
@@ -145,5 +99,5 @@ export default async function MyListingsPage() {
         )}
       </main>
     </div>
-  );
+  )
 }
