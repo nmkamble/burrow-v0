@@ -10,7 +10,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CalendarDays, Package, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import {
+  CalendarDays,
+  Package,
+  ArrowDownLeft,
+  ArrowUpRight,
+  MessageSquare,
+  Reply,
+} from "lucide-react";
 import Link from "next/link";
 import { RequestActions } from "@/components/request-actions";
 
@@ -96,6 +103,7 @@ export default async function RequestsPage() {
             </TabsTrigger>
           </TabsList>
 
+          {/* Borrowing Tab */}
           <TabsContent value="borrowing" className="mt-4">
             {borrowRequests && borrowRequests.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -122,16 +130,37 @@ export default async function RequestsPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <CalendarDays className="h-4 w-4" />
+                        <CalendarDays className="h-4 w-4 shrink-0" />
                         <span>
                           {new Date(req.start_date).toLocaleDateString()} -{" "}
                           {new Date(req.end_date).toLocaleDateString()}
                         </span>
                       </div>
+
+                      {/* Borrower's original message */}
                       {req.message && (
-                        <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                          {req.message}
-                        </p>
+                        <div className="mt-3 rounded-lg bg-muted/50 p-3">
+                          <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                            <MessageSquare className="h-3 w-3" />
+                            Your message
+                          </div>
+                          <p className="text-sm text-foreground">
+                            {req.message}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Owner's response */}
+                      {req.owner_response && (
+                        <div className="mt-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
+                          <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-primary">
+                            <Reply className="h-3 w-3" />
+                            Lender&apos;s response
+                          </div>
+                          <p className="text-sm text-foreground">
+                            {req.owner_response}
+                          </p>
+                        </div>
                       )}
                     </CardContent>
                   </Card>
@@ -156,53 +185,84 @@ export default async function RequestsPage() {
             )}
           </TabsContent>
 
+          {/* Lending Tab */}
           <TabsContent value="lending" className="mt-4">
             {lendRequests && lendRequests.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {lendRequests.map((req) => (
-                  <Card key={req.id}>
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between gap-2">
-                        <CardTitle className="text-base">
-                          <Link
-                            href={`/items/${req.items?.id}`}
-                            className="hover:text-primary transition-colors"
+                {lendRequests.map((req) => {
+                  const borrowerName = (
+                    req.profiles as { display_name: string | null }
+                  )?.display_name || "Someone";
+
+                  return (
+                    <Card key={req.id}>
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <CardTitle className="text-base">
+                            <Link
+                              href={`/items/${req.items?.id}`}
+                              className="hover:text-primary transition-colors"
+                            >
+                              {req.items?.title || "Unknown Item"}
+                            </Link>
+                          </CardTitle>
+                          <Badge
+                            variant="secondary"
+                            className={statusColors[req.status] || ""}
                           >
-                            {req.items?.title || "Unknown Item"}
-                          </Link>
-                        </CardTitle>
-                        <Badge
-                          variant="secondary"
-                          className={statusColors[req.status] || ""}
-                        >
-                          {req.status}
-                        </Badge>
-                      </div>
-                      <CardDescription>
-                        From{" "}
-                        {(req.profiles as { display_name: string | null })
-                          ?.display_name || "Someone"}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <CalendarDays className="h-4 w-4" />
-                        <span>
-                          {new Date(req.start_date).toLocaleDateString()} -{" "}
-                          {new Date(req.end_date).toLocaleDateString()}
-                        </span>
-                      </div>
-                      {req.message && (
-                        <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                          {req.message}
-                        </p>
-                      )}
-                      {req.status === "pending" && (
-                        <RequestActions requestId={req.id} />
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
+                            {req.status}
+                          </Badge>
+                        </div>
+                        <CardDescription>
+                          From {borrowerName}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <CalendarDays className="h-4 w-4 shrink-0" />
+                          <span>
+                            {new Date(req.start_date).toLocaleDateString()} -{" "}
+                            {new Date(req.end_date).toLocaleDateString()}
+                          </span>
+                        </div>
+
+                        {/* Borrower's message */}
+                        {req.message && (
+                          <div className="mt-3 rounded-lg bg-muted/50 p-3">
+                            <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                              <MessageSquare className="h-3 w-3" />
+                              Message from {borrowerName}
+                            </div>
+                            <p className="text-sm text-foreground">
+                              {req.message}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Owner's response (already responded) */}
+                        {req.owner_response && req.status !== "pending" && (
+                          <div className="mt-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
+                            <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-primary">
+                              <Reply className="h-3 w-3" />
+                              Your response
+                            </div>
+                            <p className="text-sm text-foreground">
+                              {req.owner_response}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Actions for pending requests */}
+                        {req.status === "pending" && (
+                          <RequestActions
+                            requestId={req.id}
+                            borrowerName={borrowerName}
+                          />
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -211,7 +271,8 @@ export default async function RequestsPage() {
                   No lending requests
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  When someone requests to borrow your items, they will appear here.
+                  When someone requests to borrow your items, they will appear
+                  here.
                 </p>
                 <Link
                   href="/list-item"

@@ -134,10 +134,10 @@ export function RentRequestForm({
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="message">Message (optional)</Label>
+            <Label htmlFor="message">Message to lender</Label>
             <Textarea
               id="message"
-              placeholder="Hi! I'd love to rent this for..."
+              placeholder="Hi! I'd love to borrow this for a project. I can pick it up anytime..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={3}
