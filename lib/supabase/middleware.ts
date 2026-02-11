@@ -9,9 +9,14 @@ export async function updateSession(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+  console.log("[v0] middleware hit for path:", request.nextUrl.pathname)
+  console.log("[v0] supabaseUrl exists:", !!supabaseUrl)
+  console.log("[v0] supabaseAnonKey exists:", !!supabaseAnonKey)
+
   // If Supabase env vars are not configured, skip session handling
   // but still enforce redirects for protected paths
   if (!supabaseUrl || !supabaseAnonKey) {
+    console.log("[v0] Supabase env vars missing, skipping session handling")
     const protectedPaths = ['/list-item', '/my-rentals', '/my-listings']
     const isProtected = protectedPaths.some((path) =>
       request.nextUrl.pathname.startsWith(path),
