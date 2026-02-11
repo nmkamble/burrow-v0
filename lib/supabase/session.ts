@@ -17,12 +17,7 @@ export async function updateSession(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  console.log("[v0] updateSession v3 - url exists:", !!supabaseUrl, "key exists:", !!supabaseAnonKey, "path:", request.nextUrl.pathname)
-
-  // If Supabase env vars are not configured, skip session handling
-  // but still enforce redirects for protected paths
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.log("[v0] env vars missing, skipping supabase client creation")
     if (isProtectedPath(request.nextUrl.pathname)) {
       return redirectToLogin(request)
     }
@@ -38,11 +33,11 @@ export async function updateSession(request: NextRequest) {
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) =>
-          request.cookies.set(name, value)
+          request.cookies.set(name, value),
         )
         supabaseResponse = NextResponse.next({ request })
         cookiesToSet.forEach(({ name, value, options }) =>
-          supabaseResponse.cookies.set(name, value, options)
+          supabaseResponse.cookies.set(name, value, options),
         )
       },
     },
