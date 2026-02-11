@@ -105,6 +105,12 @@ export function SiteHeader({ user }: { user: SupabaseUser | null }) {
                   <DropdownMenuItem asChild>
                     <Link href="/my-listings">My Listings</Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">
+                      <User className="mr-2 h-4 w-4" />
+                      My Profile
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
