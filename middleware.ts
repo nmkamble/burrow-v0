@@ -2,17 +2,21 @@ import { updateSession } from "@/lib/supabase/middleware"
 import { NextResponse, type NextRequest } from "next/server"
 
 export async function middleware(request: NextRequest) {
-  console.log("[v0] root middleware v3 hit:", request.nextUrl.pathname)
   try {
     return await updateSession(request)
   } catch (error) {
-    console.error("[v0] middleware v3 caught error:", error)
+    console.error("[v0] middleware error:", error)
     return NextResponse.next()
   }
 }
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/list-item/:path*",
+    "/my-rentals/:path*",
+    "/my-listings/:path*",
+    "/requests/:path*",
+    "/profile/:path*",
+    "/auth/:path*",
   ],
 }
