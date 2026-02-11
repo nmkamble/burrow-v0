@@ -19,15 +19,14 @@ export default async function ItemDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  console.log("[v0] ItemDetailPage rendering with id:", id);
   const supabase = await createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Fetch item with category
-  const { data: item, error: itemError } = await supabase
+  // Fetch item with category and owner profile
+  const { data: item } = await supabase
     .from("items")
     .select(
       `
@@ -38,8 +37,6 @@ export default async function ItemDetailPage({
     )
     .eq("id", id)
     .single();
-
-  console.log("[v0] Item query result:", { item: item?.id, error: itemError });
 
   if (!item) {
     notFound();
