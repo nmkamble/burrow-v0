@@ -25,7 +25,7 @@ export default async function ItemDetailPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Fetch item with category
+  // Fetch item with category and owner profile
   const { data: item } = await supabase
     .from("items")
     .select(
