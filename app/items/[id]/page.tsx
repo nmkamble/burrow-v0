@@ -19,7 +19,9 @@ export default async function ItemDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  console.log("[v0] item page v2 reached for id:", id);
   const supabase = await createClient();
+  console.log("[v0] supabase client created successfully");
 
   const {
     data: { user },
